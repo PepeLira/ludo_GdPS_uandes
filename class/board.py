@@ -6,11 +6,7 @@ from player import Player
 
 class Board():
     def __init__(self) -> None:
-        self.board_1 = array.array('u', [Token()] * 52)
-        self.board_1[0].color = "R"
-        self.board_1[13].color = "Y"
-        self.board_1[26].color = "B"
-        self.board_1[39].color = "G"
+        self.board = array.array('u', [Token()] * 52)
         self.borad_R = array.array('u', [Token("R")] * 6)
         self.borad_Y = array.array('u', [Token("Y")] * 6)
         self.borad_B = array.array('u', [Token("B")] * 6)
@@ -29,6 +25,38 @@ class Board():
                 return True
         return False
     
+    
+    def move(self,actual, plus, color):
+        position = actual + plus
+
+        if actual + plus > 52:
+            position = actual + plus - 52
+        
+        if color == "R" and position >= 52:
+            pass
+        if color == "Y" and position >= 52:
+            pass
+        if color == "B" and position >= 52:
+            pass
+        if color == "G" and position >= 52:
+            pass
+
+        if self.board[position].color != "W":
+            for player in self.players:
+                if player.color == self.board[position]:
+                    player.token_home += self.board[position].number
+            
+            self.borad[position].color = self.borad[actual].color 
+            self.borad[position].number = self.borad[actual].number
+            self.borad[actual].color = "W"
+            self.borad[actual].number = 0
+
+        else:
+            self.borad[position].color = self.borad[actual].color 
+            self.borad[position].number = self.borad[actual].number
+            self.borad[actual].color = "W"
+            self.borad[actual].number = 0
+
     
 
         
