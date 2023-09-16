@@ -6,7 +6,7 @@ from player import Player
 
 class Board():
     def __init__(self) -> None:
-        self.board = array.array('u', [Token()] * 52)
+        self.board = array.array('u', [Token("W")] * 52)
         self.borad_R = array.array('u', [Token("R")] * 6)
         self.borad_Y = array.array('u', [Token("Y")] * 6)
         self.borad_B = array.array('u', [Token("B")] * 6)
@@ -56,6 +56,24 @@ class Board():
             self.borad[position].number = self.borad[actual].number
             self.borad[actual].color = "W"
             self.borad[actual].number = 0
+
+
+    def out(self,player):
+        if player.token_home >= 1:
+            player.token_home -= 1
+            player.token_in_game += 1
+        else:
+            return player 
+        if player.color == "R":
+            self.move(0,0,"R")
+        if player.color == "Y":
+            self.move(12,0,"Y")
+        if player.color == "B":
+            self.move(25,0,"B")
+        if player.color == "G":
+            self.move(35,0,"G")
+        return player
+
 
     
 
