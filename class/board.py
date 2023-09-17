@@ -16,8 +16,10 @@ class Board():
 
     def add_player(self,number):
         colors = ["R","Y","B","G"]
+        point = 0
         for n in range(number):
-            self.players.append(Player(colors[n]))
+            self.players.append(Player(colors[n], point))
+            point += 13
 
     def win_game(self):
         for player in self.players:
@@ -73,6 +75,19 @@ class Board():
         if player.color == "G":
             self.move(35,0,"G")
         return player
+    
+    def roll(self, player):
+        dice = self.dice.roll()
+        if dice == 1 and player.token_home >= 0:
+            self.out(player)
+        else:
+            start = player.start_point
+            
+            #Logica para elegir a que ficha se mueve
+            self.move()
+
+
+
 
 
     
