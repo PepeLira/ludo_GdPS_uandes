@@ -14,27 +14,27 @@ class Board():
         self.players = []
         self.dice = Dice()
 
-    def add_player(self,number):
+    def add_player(self,number):  #agrega jugadores, siempre en ese orden 
         colors = ["R","Y","B","G"]
         point = 0
         for n in range(number):
             self.players.append(Player(colors[n], point))
             point += 13
 
-    def win_game(self):
+    def win_game(self):  #verifica si alguien gano
         for player in self.players:
             if player.token_win>= 4:
                 return True
         return False
     
     
-    def move(self,actual, plus, color):
+    def move(self,actual, plus, color):  #moviemientos basicos, tambien ve si se comen alguna ficha 
         position = actual + plus
 
         if actual + plus > 52:
             position = actual + plus - 52
         
-        if color == "R" and position >= 52:
+        if color == "R" and position >= 52:   #agregar logica para pasar a "camino de la gloria "
             pass
         if color == "Y" and position >= 52:
             pass
@@ -60,7 +60,7 @@ class Board():
             self.borad[actual].number = 0
 
 
-    def out(self,player):
+    def out(self,player):   #Sacar ficha de la casa, se retorna al jugador 
         if player.token_home >= 1:
             player.token_home -= 1
             player.token_in_game += 1
@@ -76,7 +76,7 @@ class Board():
             self.move(35,0,"G")
         return player
     
-    def roll(self, player):
+    def roll(self, player):  #logica de tirar dado... esta hace los movimientos 
         dice = self.dice.roll()
         if dice == 1 and player.token_home >= 0:
             self.out(player)
