@@ -15,7 +15,7 @@ def mostrar_info(jugadores):
         print(diccionario)
         
 
-colores = ["red", "blue"] #Hay que hacer una funcion que ordene quien saca el numero mayor
+colores = ["red", "blue", "green", "yellow"] #Hay que hacer una funcion que ordene quien saca el numero mayor
 jugadores = []
 
 for i in colores:
@@ -24,12 +24,22 @@ for i in colores:
 
 while True:
     for e in jugadores:
-        jugar_dado = tirar_dado()
-        print(jugar_dado)
-        e.sacar_ficha(jugar_dado)
-        mostrar_info(jugadores)
+        while True:
+            jugar_dado = tirar_dado()
+            print(jugar_dado)
+            e.sacar_ficha(jugar_dado)
+            mostrar_info(jugadores)
+            if jugar_dado == 6 or jugar_dado == 1:
+                pass
+            else:
+                break
+        if e.ganador():
+            break
+    if e.ganador():
+        break
 
+    
     print("siguiente turno") 
-    time.sleep(3)
+    #time.sleep(3)
 
 

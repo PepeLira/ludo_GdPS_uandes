@@ -1,4 +1,5 @@
 from Ficha import Ficha
+import time
 
 class Jugador:
     def __init__(self, color_jugador):
@@ -43,17 +44,30 @@ class Jugador:
         if len(fichas_iniciadas) != 0:
             ficha_menor = min(fichas_iniciadas, key=lambda x: x.indice)
             nueva_posicion = ficha_menor.indice + numero_dado
-            
-            valor_maximo_permitido = f"{self.color_jugador[0].upper()}WIN"
-            
-            if nueva_posicion >= self.casillas.index(valor_maximo_permitido):
-                ficha_menor.posicion = valor_maximo_permitido
-            else:
-                ficha_menor.indice = nueva_posicion
-                ficha_menor.posicion = self.casillas[nueva_posicion]
-        
+
+            if nueva_posicion >= len(self.casillas):
+                nueva_posicion = len(self.casillas) - 1
+
+            ficha_menor.indice = nueva_posicion
+            ficha_menor.posicion = self.casillas[nueva_posicion]
+            self.comer_ficha(ficha_menor.posicion)
         else:
             pass
+
+    def ganador(self):
+        for i in self.lista_fichas:
+            if i.posicion != self.casillas[-1]:
+                return False
+        return True
+    
+    def comer_ficha(self, nueva_posicion):
+        for i in self.lista_fichas:
+            if i.color != self.color_jugador:
+                print(self.color_jugador, "COMIO A FICHA", i.color)
+                if i.posicion == nueva_posicion:
+                    i.posicion = 0
+                    i.indice = 0
+                    time.sleep(3)
 
 
 
