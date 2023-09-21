@@ -1,6 +1,6 @@
 import tkinter as tk
 import numpy as np
-from ui.ludo_board import LudoBoard
+from .ludo_board import LudoBoard
 
 class LudoGame:
     def __init__(self, root):

@@ -11,6 +11,7 @@ class PlayerPanel:
         self.common_path = common_path
         self.ref_width = ref_width
         self.cell_size = cell_size
+        self.common_tokens = []
         self.colorize_cells()
         self.draw_base_tokens()
 
@@ -60,12 +61,9 @@ class PlayerPanel:
                         canvas.create_oval(x1, y1, x2, y2, fill=self.color, outline="white", width=3)
         
     def draw_player_token(self, cell, n_of_tokens):
-        # Destroy all child widgets inside the frame
-        for widget in cell.winfo_children():
-            widget.destroy()
-        
+        self.common_tokens.append(cell)
         frame_width = self.cell_size
-
+        
         frame_middle = frame_width // 1.2
         token_size = frame_width // 1.2  # Adjusted to center the token
         delta = frame_width / 5

@@ -1,7 +1,8 @@
 import tkinter as tk
-from ui.player_panel import PlayerPanel
+from .ui.player_panel import PlayerPanel
 import random
 from collections import Counter
+from backend.game_flow import GameFlow
 
 
 class LudoBoard:
@@ -45,14 +46,17 @@ class LudoBoard:
         #         label = tk.Label(glory_path[i], text=str(i), bg="lightblue", font=("Helvetica", 20))
         #         label.place(relx=0.5, rely=0.5, anchor="center")
 
-    def set_board_state(self, board_state):
-        for i in range(len(self.player_panels)):
-            player_panels = self.player_panels[i]
-            player_panels.draw_base_tokens(board_state["base_tokens"][i])
-            self.draw_common_path_tokens(board_state["common_path"][i], player_panels)
-            self.draw_common_path_tokens(board_state["glory_paths"][i], player_panels)
-        self.draw_winner_tokens(board_state["winner_tokens"])  
+    def clear_board(self, player_panel):
+        for prev_cell in player_panel.common_tokens:
+            for widget in prev_cell.winfo_children():
+                widget.destroy()
+        player_panel.common_tokens = []
 
+    def clear_glory_paths(self, player_panel):
+        for prev_cell in player_panel.glory_path:
+            for widget in prev_cell.winfo_children():
+                widget.destroy()
+    
     def draw_common_path_tokens(self, token_sells, player_panel):
         number_counts = Counter(token_sells)
         counts = [(number, count) for number, count in number_counts.items()]
@@ -84,6 +88,8 @@ class LudoBoard:
                                                 self.common_path,
                                                 self.player_panel_width,
                                                 self.cell_width))
+        self.sim_game_flow = GameFlow(self.n_of_players)
+
         # self.player_panels[1].draw_player_token(self.player_panels[1].glory_path[2], 2)
         # self.player_panels[1].draw_base_tokens(2)
         # self.draw_winner_tokens(self.player_panels, [1,2,1,3])
@@ -245,9 +251,6 @@ class LudoBoard:
         self.action_button = tk.Button(self.root, text="Enviar", command=self.handle_button_click)
         self.action_button.grid(row=2, column=3, padx=5, pady=5, sticky="nsew")
 
-    def set_board_state(self, board_state):
-        self.board_state = board_state
-
     def handle_button_click(self):
         if self.current_state == self.states[0]: # Numero de jugadores
             # Get the player number from the text area
@@ -268,30 +271,32 @@ class LudoBoard:
             new_order = [(winner + i) % len(self.player_panels) for i in range(len(self.player_panels))]
 
             # Rearrange the 'self.player_panels' list based on the new order
-            self.player_panels = [self.player_panels[i] for i in new_order]
+            # self.player_panels = [self.player_panels[i] for i in new_order]
             self.display_message(message)
 
             self.current_state = self.states[2]
-
-        # TODO: implementar el resto de estados
+    
         elif self.current_state == self.states[2]: # Tirar dado
-            board_state_example = {"base_tokens": [1,4,4,4], # el primer juador tiene 3 tokens en la base
-                            "common_path": [[28,28,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]],  
-                            "glory_paths": [[0,0,2,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]],
-                            "winner_tokens": [0,0,0,0], # no hay fichas en el espacio ganador
-                            "winner": False}   
+            self.board_state = self.sim_game_flow.game_board_states.pop(0)
+            self.display_message(f"El jugador {self.board_state['current_player']} sacó {self.board_state['dice']}")
+            self.current_state = self.states[3]
+        elif self.current_state == self.states[3]: # Mover ficha
             for i in range(len(self.player_panels)):
                 player_panel = self.player_panels[i]
-                player_panel.draw_base_tokens(board_state_example["base_tokens"][i])
-                self.draw_common_path_tokens(board_state_example["common_path"][i], player_panel)
-                self.draw_glory_path_tokens(board_state_example["glory_paths"][i], player_panel)
-            self.draw_winner_tokens(board_state_example["winner_tokens"]) 
+                self.clear_glory_paths(player_panel)
+                self.clear_board(player_panel)
+                player_panel.draw_base_tokens(self.board_state["base_tokens"][i])
+                self.draw_common_path_tokens(self.board_state["common_path"][i], player_panel)
+                self.draw_glory_path_tokens(self.board_state["glory_paths"][i], player_panel)
+            self.draw_winner_tokens(self.board_state["winner_tokens"])
+            if self.board_state["winner"]:
+                self.current_state = self.states[4]
+            else:
+                self.current_state = self.states[2]
+        
+        elif self.current_state == self.states[4]: # Fin del juego
+            self.display_message(f"El juego ha terminado \n El ganador es el jugador {self.board_state['current_player']}")
 
-        # TODO: implementar el resto de estados
-        # elif self.current_state == self.states[3]: # Mover ficha
-        #     self.display_message("Mover ficha")
-        #     self.current_state = self.states[4]
-                
     def get_highest_player(self, player_panels):
         while True:
             message = ''

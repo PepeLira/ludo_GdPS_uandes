@@ -1,5 +1,5 @@
 import tkinter as tk
-from ludo_game import LudoGame
+from front.ludo_game import LudoGame
 
 def main():
     root = tk.Tk()
